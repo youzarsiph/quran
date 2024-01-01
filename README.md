@@ -1,2 +1,3 @@
 # holy-quran
-Cross platform Qur'an app
+
+Cross platform Quran app
