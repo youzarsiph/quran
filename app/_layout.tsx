@@ -1,27 +1,60 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { SplashScreen, Stack } from 'expo-router';
-import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { useEffect } from "react";
+import { useFonts } from "expo-font";
+import { useColorScheme } from "react-native";
+import { SplashScreen, Stack } from "expo-router";
+import { getHeaderTitle } from "@react-navigation/elements";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
+} from "@react-navigation/native";
+import {
+  PaperProvider,
+  adaptNavigationTheme,
+  MD3LightTheme,
+  MD3DarkTheme,
+  Appbar,
+} from "react-native-paper";
+
+const { LightTheme, DarkTheme } = adaptNavigationTheme({
+  reactNavigationLight: NavigationDefaultTheme,
+  reactNavigationDark: NavigationDarkTheme,
+});
+
+const CombinedDefaultTheme = {
+  ...MD3LightTheme,
+  ...LightTheme,
+  colors: {
+    ...MD3LightTheme.colors,
+    ...LightTheme.colors,
+  },
+};
+const CombinedDarkTheme = {
+  ...MD3DarkTheme,
+  ...DarkTheme,
+  colors: {
+    ...MD3DarkTheme.colors,
+    ...DarkTheme.colors,
+  },
+};
 
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
-} from 'expo-router';
+} from "expo-router";
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
-  initialRouteName: '(tabs)',
+  initialRouteName: "(tabs)",
 };
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+const RootLayout = () => {
   const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-    ...FontAwesome.font,
+    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
+    ...MaterialCommunityIcons.font,
   });
 
   // Expo Router uses Error Boundaries to catch errors in the navigation tree.
@@ -40,17 +73,36 @@ export default function RootLayout() {
   }
 
   return <RootLayoutNav />;
-}
+};
 
-function RootLayoutNav() {
+const RootLayoutNav = () => {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
+    <PaperProvider
+      theme={colorScheme === "light" ? CombinedDefaultTheme : CombinedDarkTheme}
+    >
+      <Stack
+        screenOptions={{
+          header: (props) => {
+            const title = getHeaderTitle(props.options, props.route.name);
+
+            return (
+              <Appbar.Header>
+                {props.back ? (
+                  <Appbar.BackAction onPress={props.navigation.goBack} />
+                ) : null}
+                <Appbar.Content title={title} />
+              </Appbar.Header>
+            );
+          },
+        }}
+      >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
-    </ThemeProvider>
+    </PaperProvider>
   );
-}
+};
+
+export default RootLayout;

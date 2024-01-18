@@ -1,4 +1,4 @@
-module.exports = function (api: { cache: (arg0: boolean) => void }) {
+module.exports = function (api) {
   api.cache(true);
   return {
     presets: ["babel-preset-expo"],
@@ -6,5 +6,10 @@ module.exports = function (api: { cache: (arg0: boolean) => void }) {
       // Required for expo-router
       "expo-router/babel",
     ],
+    env: {
+      production: {
+        plugins: ["react-native-paper/babel"],
+      },
+    },
   };
 };
