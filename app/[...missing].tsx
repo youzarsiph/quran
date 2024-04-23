@@ -1,17 +1,16 @@
-import { Link, Stack } from "expo-router";
-import { Text, View } from "react-native";
+import { Stack, router } from 'expo-router'
+import { Button, Surface, Text } from 'react-native-paper'
 
 const NotFoundScreen = () => (
-  <>
-    <Stack.Screen options={{ title: "Oops!" }} />
-    <View>
-      <Text>This screen doesn't exist.</Text>
+  <Surface style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+    <Stack.Screen options={{ title: 'Oops!' }} />
 
-      <Link href="/">
-        <Text>Go to home screen!</Text>
-      </Link>
-    </View>
-  </>
-);
+    <Text variant="bodyLarge">This screen doesn't exist.</Text>
 
-export default NotFoundScreen;
+    <Button mode="contained" onPress={() => router.push('/')}>
+      Go to home screen!
+    </Button>
+  </Surface>
+)
+
+export default NotFoundScreen
